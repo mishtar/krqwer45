@@ -12,7 +12,35 @@ class App extends Component {
         { id: 3, name: "Leer un rato", done: false }
       ],
       newTask: ''
-    }
+    };
+    this.change = this.change.bind(this);
+    this.submit = this.submit.bind(this);
+    this.cambiar = this.cambiar.bind(this);
+  }
+
+  change(event){
+    this.setState({newTask: event.target.value});
+  }
+  cambiar(indice){
+    this.setState({tasks: this.state.tasks.map(
+      (element,index) => index === (indice-1) 
+      ? {...element, done: !element.done}
+      : element
+    )});
+  }
+  submit(event){
+    this.setState({
+      tasks: 
+      [...this.state.tasks,
+        {
+          id: (this.state.tasks.length +1),
+          name: this.state.newTask, 
+          done: false
+        }
+      ], 
+      newTask: ''
+    });
+    event.preventDefault();
   }
   render() {
     return (
@@ -20,10 +48,12 @@ class App extends Component {
         <div className="list">
           <h3>Por hacer:</h3>
           <ul className="todo">
-            {this.state.tasks.map((task, index) => <li key={task.id}>{task.name}</li>)}
+            {this.state.tasks.map((task, index) => 
+              <li key={task.id} onClick={() => this.cambiar(task.id)} className={task.done ? 'done' : null}>{task.name}</li>)
+            }
           </ul>
-          <form>
-            <input type="text" id="new-task" placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
+          <form onSubmit={this.submit}>
+            <input type="text" onChange={this.change} className={this.state.newTask === '' ? 'error' : null} id="new-task" placeholder="Ingresa una tarea y oprime Enter" value={this.state.newTask} />
           </form>
         </div>
       </div>
